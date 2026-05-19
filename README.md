@@ -13,9 +13,7 @@ A free, installable Progressive Web App (PWA) that runs entirely in your browser
 
 ## 🌐 Live demo
 
-Hosted free on GitHub Pages: **`https://<your-username>.github.io/portfolio-forge/`**
-
-*(Replace `<your-username>` after you fork — see setup below.)*
+Hosted free on GitHub Pages: **`(https://zeewilliams.github.io/portfolio-forge/)`**
 
 ---
 
