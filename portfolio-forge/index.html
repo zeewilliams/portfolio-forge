@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0e0a" />
+  <meta name="description" content="Turn any cybersecurity lab URL into a polished GitHub portfolio repo. No AI, no signup, runs entirely in your browser." />
+  <title>Portfolio Forge — Lab → GitHub Repo</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+
+  <!-- Fonts: JetBrains Mono (mono) + Space Mono (display) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Scanline overlay for that CRT feel -->
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="prompt">$</span>
+      <span class="brand-text">portfolio-forge</span>
+      <span class="cursor">_</span>
+    </div>
+    <nav class="topbar-nav">
+      <a href="#how" class="navlink">how it works</a>
+      <a href="https://github.com" target="_blank" rel="noopener" class="navlink">github</a>
+      <button id="installBtn" class="install-btn" hidden>install app</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <p class="kicker">// done-for-you cybersecurity portfolio docs</p>
+      <h1 class="title">
+        Paste a lab URL.<br />
+        <span class="title-accent">Download a portfolio.</span>
+      </h1>
+      <p class="lede">
+        Turn any TryHackMe, Hack The Box, Pluralsight, Splunk, Azure, or AWS lab
+        into a polished GitHub portfolio scaffold. You fill in the specifics —
+        we handle the structure, MITRE mappings, resume bullets, and upload guide.
+        Runs entirely in your browser.
+      </p>
+
+      <div class="badges">
+        <span class="badge">✓ 100% offline-capable</span>
+        <span class="badge">✓ no API keys</span>
+        <span class="badge">✓ template-driven</span>
+        <span class="badge">✓ free forever</span>
+      </div>
+    </section>
+
+    <!-- The Forge -->
+    <section class="forge" id="forge" aria-label="Portfolio generator">
+      <div class="forge-header">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-y"></span>
+        <span class="dot dot-g"></span>
+        <span class="forge-title">forge.sh</span>
+      </div>
+
+      <div class="forge-body">
+        <!-- Step 1: URL -->
+        <div class="field">
+          <label for="labUrl" class="field-label">
+            <span class="step-num">01</span>
+            <span>Lab or course URL</span>
+          </label>
+          <input
+            type="url"
+            id="labUrl"
+            class="field-input"
+            placeholder="https://tryhackme.com/room/yourroom"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <p class="field-hint" id="platformHint">
+            <span class="hint-dim">detected platform:</span> <span id="platformName">—</span>
+          </p>
+        </div>
+
+        <!-- Step 2: Your name -->
+        <div class="field-row">
+          <div class="field">
+            <label for="userName" class="field-label">
+              <span class="step-num">02</span>
+              <span>Your name</span>
+            </label>
+            <input
+              type="text"
+              id="userName"
+              class="field-input"
+              placeholder="Jane Doe"
+              autocomplete="off"
+            />
+          </div>
+          <div class="field">
+            <label for="githubHandle" class="field-label">
+              <span class="step-num">03</span>
+              <span>GitHub handle (optional)</span>
+            </label>
+            <input
+              type="text"
+              id="githubHandle"
+              class="field-input"
+              placeholder="janedoe"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <!-- Step 3: Optional notes -->
+        <div class="field">
+          <label for="notes" class="field-label">
+            <span class="step-num">04</span>
+            <span>Your notes (optional, but improves quality)</span>
+          </label>
+          <textarea
+            id="notes"
+            class="field-input field-textarea"
+            placeholder="e.g. Created Sentinel workspace. Connected Windows event logs. Wrote KQL rule for failed logons > 5 in 10min. Tested with brute-force sim."
+            rows="4"
+          ></textarea>
+        </div>
+
+        <!-- Action -->
+        <div class="action-row">
+          <button id="generateBtn" class="generate-btn">
+            <span class="btn-prompt">$</span>
+            <span class="btn-text">./generate-portfolio</span>
+          </button>
+          <button id="previewBtn" class="ghost-btn" hidden>preview README</button>
+        </div>
+
+        <p class="action-hint">↳ Downloads a ZIP you can drag straight into GitHub.</p>
+      </div>
+    </section>
+
+    <!-- Preview pane (appears after generation) -->
+    <section class="preview" id="preview" hidden>
+      <div class="preview-header">
+        <span class="preview-label">// preview · README.md</span>
+        <button id="copyReadmeBtn" class="ghost-btn-sm">copy markdown</button>
+      </div>
+      <pre id="previewContent" class="preview-content"></pre>
+    </section>
+
+    <!-- How it works -->
+    <section class="how" id="how">
+      <h2 class="section-title">// how it works</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-marker">01</span>
+          <div>
+            <h3>Paste your lab URL</h3>
+            <p>We detect the platform (THM, HTB, Pluralsight, Azure, AWS, Splunk, LetsDefend, Coursera, GCP) and pick a matching template.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-marker">02</span>
+          <div>
+            <h3>Add your name + notes</h3>
+            <p>Drop in whatever lab notes you have. Even one sentence helps the template fill in the right details.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-marker">03</span>
+          <div>
+            <h3>Hit generate</h3>
+            <p>Get a ZIP with README, folder structure, screenshot placeholders, resume bullets, LinkedIn post, MITRE mapping, and a GitHub upload guide.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-marker">04</span>
+          <div>
+            <h3>Drop it into GitHub</h3>
+            <p>Unzip → create a new GitHub repo → drag the files in. The included <code>UPLOAD-GUIDE.md</code> walks you through every click.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="supported">
+      <h2 class="section-title">// supported platforms</h2>
+      <div class="platform-grid">
+        <div class="platform">TryHackMe</div>
+        <div class="platform">Hack The Box</div>
+        <div class="platform">Pluralsight</div>
+        <div class="platform">LetsDefend</div>
+        <div class="platform">Splunk</div>
+        <div class="platform">Microsoft Azure</div>
+        <div class="platform">AWS</div>
+        <div class="platform">Google Cloud</div>
+        <div class="platform">Coursera</div>
+        <div class="platform">Generic / Other</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      <span class="prompt">$</span> built for cybersecurity students · runs in your browser · zero telemetry
+    </p>
+    <p class="footer-sub">
+      open source · MIT · <a href="https://github.com" target="_blank" rel="noopener">view source</a>
+    </p>
+  </footer>
+
+  <!-- Toast for feedback -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- JSZip for ZIP creation (offline-cached after first load) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- App scripts -->
+  <script src="js/templates.js"></script>
+  <script src="js/detect.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- PWA: register service worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
